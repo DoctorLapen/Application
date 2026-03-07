@@ -9,7 +9,8 @@ const Header = () => {
     const linkStyle =
         "flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-black";
 
-    const isAuth = useSelector((state: RootState) => !!state.auth.isAuth);
+    const isAuth = useSelector((state: RootState) => state.auth.isAuth);
+    const firstName = useSelector((state: RootState) => state.auth.user?.firstName);
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     const handleLogout = () => {
@@ -46,7 +47,7 @@ const Header = () => {
 
                     {isAuth && (
                         <div className="flex items-center gap-2 text-gray-700">
-                            <span className="text-sm font-medium">{"Eduard"}</span>
+                            <span className="text-sm font-medium">{firstName}</span>
                         </div>
                     )}
                     {!isAuth ? (
