@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import {  RegisterDto } from './dto/register.dto';
-import { LoginDto} from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -19,7 +19,7 @@ export class AuthService {
   ) { }
 
   async register(registerDto: RegisterDto): Promise<RegisterResponseDto> {
-    const { email, password,firstName,lastName } = registerDto;
+    const { email, password, firstName, lastName } = registerDto;
 
     const existingUser = await this.usersRepository.findOne({ where: { email } });
     if (existingUser) {
@@ -41,7 +41,7 @@ export class AuthService {
 
   async login(loginDto: LoginDto): Promise<LoginResponseDto> {
     const { email, password } = loginDto;
-    const user = await this.usersRepository.findOne({ where: { email} });
+    const user = await this.usersRepository.findOne({ where: { email } });
 
     if (!user) {
       throw new UserNotFoundError();
@@ -52,18 +52,27 @@ export class AuthService {
       throw new WrongPasswordError();
     }
 
-    return await this.generateToken(user);
+    
+    const accessToken = this.generateToken(user);
+
+    
+    const { password: _, ...userData } = user;
+
+    return {
+      accessToken,
+      user: userData,
+    };
   }
-  private generateToken(user: User): { accessToken: string } {
+
+  private generateToken(user: User): string {
     const payload = {
       sub: user.id,
       email: user.email,
     };
 
-    return {
-      accessToken: this.jwtService.sign(payload),
-    };
+    return this.jwtService.sign(payload);
+
   }
-  
+
 }
 
