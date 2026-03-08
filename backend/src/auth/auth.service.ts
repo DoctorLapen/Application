@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -63,6 +63,11 @@ export class AuthService {
       user: userData,
     };
   }
+
+  async findUserById(id: number): Promise<User| null> {
+    return this.usersRepository.findOne({ where: { id } });
+  }
+
 
   private generateToken(user: User): string {
     const payload = {

@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { JwtPayload } from './interfaces/auth.interfaces';
+import { JwtPayload, UserInfo } from './interfaces/auth.interfaces';
+
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -13,7 +14,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: JwtPayload) {
-    return { userId: payload.sub, email: payload.email };
+  async validate(payload: JwtPayload): Promise<UserInfo> {
+  const userId = Number(payload.sub);
+
+  if (isNaN(userId)) {
+    throw new UnauthorizedException('Invalid token: userId is not a number');
   }
+
+  return {
+    userId,
+    email: payload.email,
+  };
+}
 }

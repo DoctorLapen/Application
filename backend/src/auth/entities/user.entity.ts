@@ -1,8 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Event } from '../../events/entities/event.entity';
 @Entity("users")
 export class User {
-    
+
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -17,5 +17,12 @@ export class User {
 
     @Column()
     lastName: string;
+
+    @OneToMany(() => Event, event => event.organizer)
+    organizedEvents: Event[];
+
+    @ManyToMany(() => Event, event => event.participants)
+    @JoinTable()
+    participatingEvents: Event[];
 
 }

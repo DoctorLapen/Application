@@ -4,7 +4,8 @@ import { IsEmail, IsNotEmpty } from 'class-validator';
 
 export function IsValidEmail() {
   return applyDecorators(
-    Transform(({ value }) => value.trim().toLowerCase()),
+    Transform(({ value }) => 
+      (typeof value === 'string' ? value.trim().toLowerCase() : value)),
     IsNotEmpty({ message: 'Email is required' }),
     IsEmail({}, { message: 'Invalid email format' }),
   );
