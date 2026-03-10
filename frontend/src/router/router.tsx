@@ -5,13 +5,16 @@ import LoginPage from "../pages/LoginPage";
 import { requireAuth } from "./requireAuth";
 import CreateEventPage from "../pages/CreateEventPage";
 import MyEventsPage from "../pages/MyEventsPage";
+import EventDetailsPage from "../pages/EventDetailsPage";
+import { EventsPage } from "../pages/EventsPage";
+import EditEventPage from "../pages/EditEventPage";
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <MainLayout />,
     children: [
-      { index: true, element: <h1>Main</h1> },
+      { index: true, element: <EventsPage/> },
       { path: 'login', element: <LoginPage /> },
       { path: 'register', element: <RegisterPage /> },
        {
@@ -19,6 +22,8 @@ export const router = createBrowserRouter([
         children: [
           { path: "create-event", element: <CreateEventPage /> },
           { path: "my-events", element: <MyEventsPage /> },
+          { path: 'events/:id', element: <EventDetailsPage /> },
+          { path: "/events/edit/:id", element: <EditEventPage /> },
         ],
       },
     ],
