@@ -1,8 +1,10 @@
 
 @import "tailwindcss";
+@import "react-big-calendar/lib/css/react-big-calendar.css";
 * {
   font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
+
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
@@ -29,4 +31,81 @@ select:-moz-autofill:hover,
 select:-moz-autofill:focus {
   box-shadow: 0 0 0px 1000px white inset; 
   -moz-text-fill-color: #111827;
+}
+@layer components {
+
+  /* основной контейнер календаря */
+  .rbc-calendar {
+    @apply bg-white text-gray-900 rounded-xl;
+  }
+
+  /* верхняя панель (month/week/day + navigation) */
+  .rbc-toolbar {
+    @apply mb-4 flex items-center justify-between gap-2;
+  }
+
+  .rbc-toolbar-label {
+    @apply text-lg font-semibold text-gray-900;
+  }
+
+  .rbc-toolbar button {
+    @apply rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-700 transition hover:bg-gray-50;
+  }
+
+  /* заголовки дней */
+  .rbc-header {
+    @apply border-b border-gray-200 py-2 text-sm font-medium text-gray-600;
+  }
+
+  /* основной месяц */
+  .rbc-month-view {
+    @apply border border-gray-200 rounded-xl overflow-hidden;
+  }
+
+  /* сетка дней */
+  .rbc-day-bg {
+    @apply border-gray-200;
+  }
+
+  /* сегодняшний день */
+  .rbc-today {
+    @apply bg-blue-50;
+  }
+
+  /* события */
+  .rbc-event {
+    @apply bg-blue-500 text-white rounded-md text-xs px-2 py-1;
+  }
+
+  .rbc-event:hover {
+    @apply bg-blue-600;
+  }
+
+  /* popup событий */
+  .rbc-overlay {
+    @apply bg-white border border-gray-200 rounded-lg shadow-lg;
+  }
+
+  /* week/day view */
+  .rbc-time-view {
+    @apply border border-gray-200 rounded-xl overflow-hidden;
+  }
+
+  .rbc-time-slot {
+    @apply text-gray-400 text-xs;
+  }
+
+  .rbc-month-row {
+  @apply h-[70px] sm:h-[90px]; 
+}
+
+.rbc-month-view .rbc-event {
+  @apply max-h-4 sm:max-h-5 overflow-hidden px-1 py-0 leading-[1rem] whitespace-nowrap text-xs;
+}
+
+
+.rbc-month-view .rbc-show-more {
+  @apply text-xs text-gray-500 mt-1;
+}
+
 }

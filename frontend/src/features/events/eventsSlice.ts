@@ -2,13 +2,14 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 import type { EventResponse, EventsState } from "./types";
-import { createEvent, deleteEvent, getEventById, getEvents, joinEvent, leaveEvent, updateEvent } from "./eventsThunks";
+import { createEvent, deleteEvent, getEventById, getEvents, getUserEvents, joinEvent, leaveEvent, updateEvent } from "./eventsThunks";
 
 import { mapEventResponseToEvent } from "./utils";
 
 
 const initialState: EventsState = {
   events: [],
+  userEvents:[],
   loading: false,
   error: null,
 };
@@ -52,9 +53,21 @@ const eventsSlice = createSlice({
         state.loading = false;
         state.error = action.payload ?? "Unknown error";
       })
+      .addCase(getUserEvents.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
 
+      .addCase(getUserEvents.fulfilled, (state, action) => {
+        state.loading = false;
 
-      // GET EVENT BY ID
+        state.userEvents = action.payload.map(mapEventResponseToEvent);
+      })
+
+      .addCase(getUserEvents.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? "Unknown error";
+      })
       .addCase(getEventById.pending, (state) => {
         state.loading = true;
         state.error = null;

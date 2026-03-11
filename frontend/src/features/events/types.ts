@@ -38,6 +38,7 @@ export interface EventResponse {
 
 export interface EventsState {
     events: Event[];
+    userEvents: Event[];
     loading: boolean;
     error: string | null;
 }

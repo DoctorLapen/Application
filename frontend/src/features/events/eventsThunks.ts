@@ -56,6 +56,37 @@ export const getEvents = createAsyncThunk<
     }
   }
 );
+export const getUserEvents = createAsyncThunk<
+  EventResponse[],
+  void,
+  { state:RootState ,rejectValue: string }
+>(
+  "events/getUserEvents",
+  async (_, thunkAPI) => {
+    try {
+      
+       const token = thunkAPI.getState().auth.accessToken
+
+     
+      const response = await api.get<EventResponse[]>("/events/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return response.data;
+    } catch (err: unknown) {
+      let message = "Failed to fetch events";
+
+      if (err instanceof Error) {
+        message = err.message;
+      }
+
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 
 export const getEventById = createAsyncThunk<
   EventResponse,

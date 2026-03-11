@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Req, Delete, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, Req, Delete, Patch, ParseIntPipe } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -24,7 +24,22 @@ export class EventsController {
     return this.eventsService.createEvent(dto, Number(user.userId));
   }
 
+@ApiOperation({ summary: 'Get all events the current user is involved in (creator or participant)' })
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: 200,
+    description: 'List of events successfully retrieved for the current user.',
+  })
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  async getMyEvents(@CurrentUser() user: UserInfo) {
+    return this.eventsService.getUserEvents(user.userId);
+  }
 
+  @Get()
+  async getAll() {
+    return await this.eventsService.getAllEvents();
+  }
   @Get(':id')
   @ApiOperation({ summary: 'Get public event by ID' })
   @ApiParam({
@@ -37,31 +52,13 @@ export class EventsController {
     status: 200,
     description: 'Event successfully retrieved.',
   })
-  async getEvent(@Param('id') id: number) {
+  async getEvent(@Param('id', ParseIntPipe) id: number) {
     return this.eventsService.getEventById(id);
   }
 
-  @ApiOperation({ summary: 'Get all public events' })
-  @ApiResponse({
-    status: 200,
-    description: 'List of all public events successfully retrieved.',
-  })
-  @Get()
-  async getAll() {
-    return await this.eventsService.getAllEvents();
-  }
+  
 
-  @ApiOperation({ summary: 'Get all events the current user is involved in (creator or participant)' })
-  @ApiBearerAuth()
-  @ApiResponse({
-    status: 200,
-    description: 'List of events successfully retrieved for the current user.',
-  })
-  @Get('my')
-  @UseGuards(JwtAuthGuard)
-  async getMyEvents(@CurrentUser() user: UserInfo) {
-    return this.eventsService.getUserEvents(user.userId);
-  }
+  
 
   @Post(':id/join')
   @UseGuards(JwtAuthGuard)
@@ -99,7 +96,7 @@ export class EventsController {
     description: 'Successfully left the event',
   })
   async leaveEvent(
-    @Param('id') eventId: number,
+    @Param('id', ParseIntPipe) eventId: number,
     @CurrentUser() user: UserInfo,
   ) {
     return this.eventsService.leaveEvent(eventId, user.userId);
@@ -120,7 +117,7 @@ export class EventsController {
     description: 'Event successfully deleted.',
   })
   async deleteEvent(
-    @Param('id') eventId: number,
+    @Param('id', ParseIntPipe) eventId: number,
     @CurrentUser() user: UserInfo,
   ) {
     return this.eventsService.deleteEvent(eventId, user.userId);
@@ -141,7 +138,7 @@ export class EventsController {
     description: 'Event successfully edited.',
   })
   async editEvent(
-    @Param('id') eventId: number,
+    @Param('id', ParseIntPipe) eventId: number,
     @CurrentUser() user: UserInfo,
     @Body() dto: EditEventDto,
   ) {
