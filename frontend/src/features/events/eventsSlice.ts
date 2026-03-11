@@ -20,7 +20,7 @@ const initialState: EventsState = {
 const eventsSlice = createSlice({
   name: "events",
   initialState,
-  reducers: {},
+  reducers: {clearEvents:()=> initialState,},
   extraReducers: (builder) => {
     builder
       .addCase(createEvent.pending, (state) => {
@@ -173,5 +173,6 @@ const eventsSlice = createSlice({
 
   },
 });
+export const { clearEvents} = eventsSlice.actions;
 
 export default eventsSlice.reducer;
