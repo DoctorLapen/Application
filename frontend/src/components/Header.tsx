@@ -22,43 +22,48 @@ const Header = () => {
     return (
         <header className="w-full bg-white border-b-2 border-gray-200">
             <div className="w-full px-4 py-3 flex justify-end">
-
                 <nav className="flex items-center gap-4">
 
-                    <NavLink to="/" className={linkStyle}>
+                    <NavLink to="/" className={linkStyle} title="Events">
                         <List size={18} />
-
-                        Events
+                        <span className="hidden sm:inline">Events</span>
                     </NavLink>
 
-                    <NavLink to="/my-events" className={linkStyle}>
+                    <NavLink to="/my-events" className={linkStyle} title="My Events">
                         <Calendar size={18} />
-                        My Events
+                        <span className="hidden sm:inline">My Events</span>
                     </NavLink>
 
                     <NavLink
                         to="/create-event"
-                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+                        className="flex items-center sm:px-4 sm:py-2 rounded-lg sm:bg-blue-600 sm:hover:bg-blue-700 transition"
+                        title="Create Event"
                     >
-                        <PlusCircle size={18} />
-                        Create Event
+                        
+                        <PlusCircle size={18} className="text-blue-600 sm:hidden" />
+
+                        
+                        <span className="hidden sm:flex items-center gap-2 text-white">
+                            <PlusCircle size={18} />
+                            Create Event
+                        </span>
                     </NavLink>
 
                     <div className="h-6 w-px bg-gray-300 mx-2"></div>
 
-
                     {isAuth && (
                         <div className="flex items-center gap-2 text-gray-700">
-                            <span className="text-sm font-medium">{firstName}</span>
+                            <span className="hidden sm:inline text-sm font-medium">{firstName}</span>
                         </div>
                     )}
                     {!isAuth ? (
                         <NavLink
                             to="/login"
                             className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100"
+                            title="Login"
                         >
                             <LogIn size={20} />
-                            <span>Login</span>
+                            <span className="hidden sm:inline">Login</span>
                         </NavLink>
                     ) : (
                         <button
