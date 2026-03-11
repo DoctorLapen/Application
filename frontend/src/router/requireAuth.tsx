@@ -2,12 +2,13 @@ import { redirect } from "react-router";
 import { store } from "../store/store"; 
 import type { RootState } from "../store/store";
 
-export const requireAuth = (): null => {
+export const requireAuth = ({ request }: { request: Request }): null | Response  => {
   const state: RootState = store.getState();
-  const isAuth = state.auth.isAuth; 
+  const isAuth = state.auth.isAuth;
 
   if (!isAuth) {
-    throw redirect("/login");
+    const currentPath = new URL(request.url).pathname;
+    return redirect(`/login?from=${encodeURIComponent(currentPath)}`);
   }
 
   return null;

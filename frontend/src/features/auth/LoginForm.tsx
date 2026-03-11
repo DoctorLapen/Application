@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import PasswordInput from "../../components/PasswordInput";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -14,6 +14,9 @@ const LoginForm = () => {
   const dispatch = useDispatch<AppDispatch>()
   const [serverError, setServerError] = useState<string | null>(null);
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams();
+  const from = searchParams.get("from") || "/";
+
   const {
     register,
     handleSubmit,
@@ -31,7 +34,7 @@ const LoginForm = () => {
     try {
       setServerError(null);
       await dispatch(loginUser(data)).unwrap()
-      navigate("/")
+       navigate(from, { replace: true });
       
     } catch (error: unknown) {
       
