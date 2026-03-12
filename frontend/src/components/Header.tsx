@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router";
 import type { AppDispatch, RootState } from "../store/store";
 import { logout } from "../features/auth/authSlice";
-import { clearEvents } from "../features/events/eventsSlice";
+
 
 
 const Header = () => {
@@ -16,7 +16,6 @@ const Header = () => {
     const navigate = useNavigate();
     const handleLogout = () => {
         dispatch(logout())
-        dispatch(clearEvents());
         navigate("/")
     }
     return (

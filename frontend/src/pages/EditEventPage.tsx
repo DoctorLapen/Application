@@ -1,7 +1,7 @@
 import EditEventForm from "../features/events/EditEventForm";
 
 import { useEffect } from "react";
-import { useParams, useNavigate } from "react-router";
+import { useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../store/store";
 
@@ -11,7 +11,7 @@ import { mapEventToEventData } from "../features/events/utils";
 
 const EditEventPage = () => {
   const { id } = useParams<{ id: string }>(); 
-  const navigate = useNavigate();
+  
   const dispatch = useDispatch<AppDispatch>();
 
   const { events, loading } = useSelector((state: RootState) => state.events);
