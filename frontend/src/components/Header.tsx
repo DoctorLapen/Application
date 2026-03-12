@@ -29,13 +29,13 @@ const Header = () => {
                         <span className="hidden sm:inline">Events</span>
                     </NavLink>
 
-                    <NavLink to="/my-events" className={linkStyle} title="My Events">
+                    <NavLink to="/events/me" className={linkStyle} title="My Events">
                         <Calendar size={18} />
                         <span className="hidden sm:inline">My Events</span>
                     </NavLink>
 
                     <NavLink
-                        to="/create-event"
+                        to="/events/create"
                         className="flex items-center sm:px-4 sm:py-2 rounded-lg sm:bg-blue-600 sm:hover:bg-blue-700 transition"
                         title="Create Event"
                     >
