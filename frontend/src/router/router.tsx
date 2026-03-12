@@ -8,6 +8,7 @@ import MyEventsPage from "../pages/MyEventsPage";
 import EventDetailsPage from "../pages/EventDetailsPage";
 import { EventsPage } from "../pages/EventsPage";
 import EditEventPage from "../pages/EditEventPage";
+import NotFoundPage from "../pages/NotFoundPage";
 
 export const router = createBrowserRouter([
   {
@@ -27,5 +28,6 @@ export const router = createBrowserRouter([
         ],
       },
     ],
+    errorElement: <NotFoundPage />,
   },
 ]);
