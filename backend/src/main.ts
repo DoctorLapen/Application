@@ -15,7 +15,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
- if (process.env.NODE_ENV !== 'production') { 
+ 
   const config = new DocumentBuilder()
     .setTitle('API Example')       
     .setDescription('API description') 
@@ -25,7 +25,7 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document); 
- }
+ 
 
   await app.listen(process.env.PORT ?? 3000);
 }
