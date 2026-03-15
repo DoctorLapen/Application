@@ -17,7 +17,7 @@ export const EventCard: FC<EventCardProps> = ({ event }) => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const user = useSelector((state: RootState) => state.auth.user);
+  const {user,isAuth}= useSelector((state: RootState) => state.auth);
 
   const isParticipant = event.participants.some(
     (p) => p.id === user?.id
@@ -30,12 +30,20 @@ export const EventCard: FC<EventCardProps> = ({ event }) => {
 
   const handleJoin = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
+    if(isAuth){
     dispatch(joinEvent(event.id));
+    }else{
+      navigate("/login");
+    }
   };
 
   const handleLeave = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
+     if(isAuth){
     dispatch(leaveEvent(event.id));
+    }else{
+      navigate("/login");
+    }
   };
 
   const openDetails = () => {

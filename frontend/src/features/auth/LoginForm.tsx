@@ -86,7 +86,7 @@ const LoginForm = () => {
       </button>
       <p className="mt-4 text-center text-gray-600">
         Don’t have an account?{" "}
-        <Link to="/register" className="text-blue-500 hover:underline">
+        <Link to={`/register?from=${encodeURIComponent(from)}`} className="text-blue-500 hover:underline">
           Register
         </Link>
       </p>

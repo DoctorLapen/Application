@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import PasswordInput from "../../components/PasswordInput";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import { registerValidator } from "../../validation/registerValidator";
 import type { LoginRequest, RegisterRequest } from "./types";
 import { loginUser, registerUser } from "./authThunks";
@@ -28,6 +28,8 @@ const RegisterForm = () => {
   })
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams();
+  const from = searchParams.get("from") || "/";
 
   const onSubmit = async (data: RegisterRequest) => {
     try {
@@ -40,8 +42,8 @@ const RegisterForm = () => {
       }
       await dispatch(loginUser(loginData)).unwrap()
 
+      navigate(from, { replace: true });
 
-      navigate("/")
     } catch (error: unknown) {
 
       if (typeof error === "string") {
