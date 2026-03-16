@@ -2,6 +2,11 @@ import type { User } from "../auth/types";
 
 
 
+export interface Tag {
+  id: number;
+  name: string;
+}
+
 export type EventData = {
     title: string;
     description: string | undefined;
@@ -9,6 +14,7 @@ export type EventData = {
     capacity: number | null | undefined;
     visibility: "public" | "private";
     dateTime: Date | null| undefined;
+    tags:Tag[]; 
 };
 
 export interface Event {
@@ -19,6 +25,7 @@ export interface Event {
     capacity?: number | null;
     visibility: "public" | "private";
     dateTime: Date;
+    tags:Tag[]; 
     organizer: User;
     participants: User[];
 }
@@ -31,6 +38,7 @@ export interface EventResponse {
     location: string;
     capacity?: number;
     visibility: "public" | "private";
+    tags:Tag[]; 
     organizer: User;
     participants: User[];
 }
@@ -50,4 +58,5 @@ export type EditEventRequest = Partial<{
   capacity: number | null;
   visibility: "public" | "private";
   dateTime: Date;
+  tags:number[]
 }>;

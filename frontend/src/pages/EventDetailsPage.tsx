@@ -9,6 +9,7 @@ import { selectEventById } from "../features/events/eventSelector";
 import { ConfirmModal } from "../features/events/ConfirmModal";
 import { Calendar, MapPin, Users } from "lucide-react";
 import { format } from "date-fns";
+import { tagColors } from "../features/events/constants";
 
 
 export const EventDetailsPage = () => {
@@ -56,7 +57,7 @@ export const EventDetailsPage = () => {
 
   const handleJoin = () => {
     if (id) {
-      
+
       if (isAuth) {
         dispatch(joinEvent(Number(id)));
       } else {
@@ -66,8 +67,8 @@ export const EventDetailsPage = () => {
   };
 
   const handleLeave = () => {
-      if (id) {
-      
+    if (id) {
+
       if (isAuth) {
         dispatch(leaveEvent(Number(id)));
       } else {
@@ -135,6 +136,20 @@ export const EventDetailsPage = () => {
                   {showAllParticipants ? "Show less" : `Show all (${participants.length})`}
                 </button>
               )}
+            </div>
+          )}
+
+          {event.tags?.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-4">
+              {event.tags.map(tag => (
+                <span
+                  key={tag.id}
+                  className="px-3 py-1 text-sm rounded text-white font-medium hover:opacity-90 transition"
+                  style={{ backgroundColor: tagColors[tag.id] || "#9ca3af" }}
+                >
+                  {tag.name}
+                </span>
+              ))}
             </div>
           )}
 
