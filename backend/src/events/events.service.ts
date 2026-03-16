@@ -2,13 +2,15 @@ import { BadRequestException, ForbiddenException, Injectable, NotFoundException 
 import { CreateEventDto } from './dto/create-event.dto';
 import { User } from 'src/auth/entities/user.entity';
 import { Event } from './entities/event.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EventVisibility } from './types/events.types';
 import { EditEventDto } from './dto/edit-event.dto';
 import { EventResponseDto } from './dto/event-response.dto';
 import { plainToInstance } from 'class-transformer';
 import { DeleteEventResponseDto } from './dto/delete-event-response.dto';
+import { Tag } from './entities/tag.entity';
+import { TagDto } from './dto/tag.dto';
 
 
 @Injectable()
@@ -16,6 +18,9 @@ export class EventsService {
   constructor(
     @InjectRepository(Event)
     private eventsRepository: Repository<Event>,
+    @InjectRepository(Tag)
+    private tagsRepository: Repository<Tag>,
+
   ) { }
 
   async createEvent(dto: CreateEventDto, userId: number): Promise<EventResponseDto> {
@@ -23,16 +28,27 @@ export class EventsService {
     const eventDateUTC = this.convertDateToUTC(dto.dateTime);
     this.validateEventDate(eventDateUTC);
 
+    let tags: Tag[] = [];
+    if (dto.tags && dto.tags.length > 0) {
+      tags = await this.tagsRepository.findBy({ id: In(dto.tags) });
+      if (tags.length !== dto.tags.length) {
+        throw new BadRequestException('Some tags not found in database');
+      }
+      if (tags.length > 5) {
+        throw new BadRequestException('Maximum 5 tags allowed per event');
+      }
+    }
     const event = this.eventsRepository.create({
       ...dto,
       dateTime: eventDateUTC,
       organizer: { id: userId } as User,
+      tags,
     });
     const savedEvent = await this.eventsRepository.save(event);
 
     const fullEvent = await this.eventsRepository.findOne({
       where: { id: savedEvent.id },
-      relations: ['organizer', 'participants'],
+      relations: ['organizer', 'participants', 'tags'],
     });
 
     return plainToInstance(EventResponseDto, fullEvent);
@@ -41,7 +57,7 @@ export class EventsService {
   async getEventById(id: number): Promise<EventResponseDto> {
     const event = await this.eventsRepository.findOne({
       where: { id },
-      relations: ['organizer', 'participants']
+      relations: ['organizer', 'participants','tags']
     });
 
     if (!event) throw new NotFoundException('event not found');
@@ -53,12 +69,25 @@ export class EventsService {
     return plainToInstance(EventResponseDto, event);
   }
 
-  async getAllEvents(): Promise<EventResponseDto[]> {
-    const events = await this.eventsRepository.find({
-      where: { visibility: EventVisibility.PUBLIC },
-      relations: ['organizer', 'participants'],
-      order: { dateTime: 'ASC' },
-    });
+  async getAllEvents(tagIds?: number[]): Promise<EventResponseDto[]> {
+    const query = this.eventsRepository
+      .createQueryBuilder('event')
+      .leftJoinAndSelect('event.organizer', 'organizer')
+      .leftJoinAndSelect('event.participants', 'participants')
+      .leftJoinAndSelect('event.tags', 'tag')
+      .where('event.visibility = :visibility', { visibility: EventVisibility.PUBLIC })
+      .orderBy('event.dateTime', 'ASC');
+
+    
+    if (tagIds && tagIds.length > 0) {
+      query.andWhere('tag.id IN (:...tagIds)', { tagIds });
+    }
+
+    const events = await query.getMany();
+
+    if (!events.length && tagIds && tagIds.length > 0) {
+      throw new NotFoundException('No events match the selected tags');
+    }
     return plainToInstance(EventResponseDto, events);
   }
 
@@ -70,7 +99,7 @@ export class EventsService {
             { organizer: { id: userId } },
             { participants: { id: userId } },
           ],
-          relations: ['organizer', 'participants'],
+          relations: ['organizer', 'participants','tags'],
           order: { dateTime: 'ASC' },
         }).then(events => events.map(e => [e.id, e]))
       ).values()
@@ -102,7 +131,7 @@ export class EventsService {
 
     const fullEvent = await this.eventsRepository.findOne({
       where: { id: savedEvent.id },
-      relations: ['organizer', 'participants'],
+      relations: ['organizer', 'participants','tags'],
     });
 
     return plainToInstance(EventResponseDto, fullEvent);
@@ -129,7 +158,7 @@ export class EventsService {
 
     const fullEvent = await this.eventsRepository.findOne({
       where: { id: savedEvent.id },
-      relations: ['organizer', 'participants'],
+      relations: ['organizer', 'participants','tags'],
     });
 
     return plainToInstance(EventResponseDto, fullEvent);
@@ -176,17 +205,42 @@ export class EventsService {
     if (eventDateUTC) event.dateTime = eventDateUTC;
     if (dto.location !== undefined) event.location = dto.location;
     if (dto.visibility !== undefined) event.visibility = dto.visibility;
+    if (dto.tags !== undefined) {
+
+    if (dto.tags.length > 5) {
+      throw new BadRequestException('Maximum 5 tags allowed');
+    }
+
+    const tags = await this.tagsRepository.findBy({
+      id: In(dto.tags),
+    });
+
+    if (tags.length !== dto.tags.length) {
+      throw new BadRequestException('Some tags not found');
+    }
+
+    event.tags = tags;
+  }
+
 
     const savedEvent = await this.eventsRepository.save(event);
 
 
     const fullEvent = await this.eventsRepository.findOne({
       where: { id: savedEvent.id },
-      relations: ['organizer', 'participants'],
+      relations: ['organizer', 'participants','tags'],
     });
 
     return plainToInstance(EventResponseDto, fullEvent);
   }
+
+  async getAllTags(): Promise<TagDto[]> {
+  const tags = await this.tagsRepository.find({
+    order: { name: 'ASC' },
+  });
+
+  return plainToInstance(TagDto, tags);
+}
 
   private convertDateToUTC(dateTime: string): Date {
     return new Date(new Date(dateTime).toISOString());

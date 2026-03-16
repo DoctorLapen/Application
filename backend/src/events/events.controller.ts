@@ -1,11 +1,11 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Req, Delete, Patch, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, Req, Delete, Patch, ParseIntPipe, Query } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/currentUser.decorator';
 
 import type { UserInfo } from 'src/auth/interfaces/auth.interfaces';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { EditEventDto } from './dto/edit-event.dto';
 @ApiTags('Events')
 @Controller('events')
@@ -24,7 +24,7 @@ export class EventsController {
     return this.eventsService.createEvent(dto, Number(user.userId));
   }
 
-@ApiOperation({ summary: 'Get all events the current user is involved in (creator or participant)' })
+  @ApiOperation({ summary: 'Get all events the current user is involved in (creator or participant)' })
   @ApiBearerAuth()
   @ApiResponse({
     status: 200,
@@ -37,9 +37,33 @@ export class EventsController {
   }
 
   @Get()
-  async getAll() {
-    return await this.eventsService.getAllEvents();
+  @ApiOperation({ summary: 'Get all public events (optionally filtered by tags)' })
+  @ApiQuery({
+    name: 'tags',
+    required: false,
+    type: String,
+    description: 'Comma separated tag IDs',
+    example: '1,2,3',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of events successfully retrieved.',
+  })
+  async getAll(@Query('tags') tags?: string) {
+    const ids = tags ? tags.split(',').map(id => +id) : [];
+    return await this.eventsService.getAllEvents(ids);
   }
+
+  @Get('tags')
+  @ApiOperation({ summary: 'Get all available tags for events' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of tags successfully retrieved.',
+  })
+  async getTags() {
+    return this.eventsService.getAllTags();
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get public event by ID' })
   @ApiParam({
@@ -56,9 +80,9 @@ export class EventsController {
     return this.eventsService.getEventById(id);
   }
 
-  
 
-  
+
+
 
   @Post(':id/join')
   @UseGuards(JwtAuthGuard)
