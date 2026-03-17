@@ -46,7 +46,7 @@ export const getEvents = createAsyncThunk<
        let url = "/events";
 
       if (params?.tags?.length) {
-        const query = params.tags.map(id => `tagIds=${id}`).join("&");
+        const query = params.tags.map(id => `tags=${id}`).join("&");
         url += `?${query}`;
       }
 
