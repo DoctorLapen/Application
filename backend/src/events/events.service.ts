@@ -85,9 +85,7 @@ export class EventsService {
 
     const events = await query.getMany();
 
-    if (!events.length && tagIds && tagIds.length > 0) {
-      throw new NotFoundException('No events match the selected tags');
-    }
+    
     return plainToInstance(EventResponseDto, events);
   }
 
