@@ -71,22 +71,27 @@ export class EventsService {
 
   async getAllEvents(tagIds?: number[]): Promise<EventResponseDto[]> {
     const query = this.eventsRepository
-      .createQueryBuilder('event')
-      .leftJoinAndSelect('event.organizer', 'organizer')
-      .leftJoinAndSelect('event.participants', 'participants')
-      .leftJoinAndSelect('event.tags', 'tag')
-      .where('event.visibility = :visibility', { visibility: EventVisibility.PUBLIC })
-      .orderBy('event.dateTime', 'ASC');
+  .createQueryBuilder('event')
+  .leftJoinAndSelect('event.organizer', 'organizer')
+  .leftJoinAndSelect('event.participants', 'participants')
+  .leftJoinAndSelect('event.tags', 'tag')
+  .where('event.visibility = :visibility', { visibility: EventVisibility.PUBLIC })
+  .orderBy('event.dateTime', 'ASC');
 
-    
-    if (tagIds && tagIds.length > 0) {
-      query.andWhere('tag.id IN (:...tagIds)', { tagIds });
-    }
+if (tagIds && tagIds.length > 0) {
+  query.andWhere(qb => {
+    const subQuery = qb.subQuery()
+      .select('event_sub.id')
+      .from(Event, 'event_sub')
+      .leftJoin('event_sub.tags', 'tag_sub')
+      .where('tag_sub.id IN (:...tagIds)', { tagIds })
+      .getQuery();
+    return 'event.id IN ' + subQuery;
+  });
+}
 
-    const events = await query.getMany();
-
-    
-    return plainToInstance(EventResponseDto, events);
+const events = await query.getMany();
+return plainToInstance(EventResponseDto, events);
   }
 
   async getUserEvents(userId: number): Promise<EventResponseDto[]> {
