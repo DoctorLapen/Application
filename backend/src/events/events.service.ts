@@ -11,6 +11,8 @@ import { plainToInstance } from 'class-transformer';
 import { DeleteEventResponseDto } from './dto/delete-event-response.dto';
 import { Tag } from './entities/tag.entity';
 import { TagDto } from './dto/tag.dto';
+import { EventSnapshotDto } from './dto/event-shapshot.dto';
+import { UserDto } from 'src/auth/dto/user.dto';
 
 
 @Injectable()
@@ -244,6 +246,40 @@ return plainToInstance(EventResponseDto, events);
 
   return plainToInstance(TagDto, tags);
 }
+async getSnapshot(): Promise<EventSnapshotDto[]> {
+  const events = await this.eventsRepository.find({
+    relations: ['organizer', 'tags', 'participants'],
+  });
+
+  return events.map(event => ({
+    id: event.id,
+    title: event.title,
+    dateTime: event.dateTime.toISOString(),
+    location:event.location,
+    organizer:  {
+      id: event.organizer.id,      
+      name: `${event.organizer.firstName} ${event.organizer.lastName}`
+    } ,
+    participants: event.participants?.map(p => ({
+  id: p.id,           
+  name: `${p.firstName} ${p.lastName}`, 
+  
+})),
+    tags: event.tags.map(tag => tag.name),
+     visibility: event.visibility,    
+    capacity: event.capacity || null,
+  }));
+}
+async getEventsByIds(ids: number[]): Promise<EventResponseDto[]> {
+    const events= await this.eventsRepository.find({
+      where: {
+        id: In(ids),
+      },
+       relations: ['organizer', 'participants','tags']
+    });
+    return plainToInstance(EventResponseDto, events);
+   
+  }
 
   private convertDateToUTC(dateTime: string): Date {
     return new Date(new Date(dateTime).toISOString());

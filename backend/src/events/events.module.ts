@@ -9,5 +9,6 @@ import { Tag } from './entities/tag.entity';
   imports: [TypeOrmModule.forFeature([Event,User,Tag])],
   controllers: [EventsController],
   providers: [EventsService],
+  exports: [EventsService],
 })
 export class EventsModule {}
