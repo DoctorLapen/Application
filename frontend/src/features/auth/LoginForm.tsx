@@ -21,23 +21,24 @@ const LoginForm = () => {
     register,
     handleSubmit,
     formState: { errors, touchedFields, isValid, isSubmitting },
+    reset,
     watch
   } = useForm<LoginRequest>({
     resolver: yupResolver(loginValidator),
     mode: "onChange",
   });
   watch(() => {
-  if (serverError) setServerError(null)
-})
+    if (serverError) setServerError(null)
+  })
 
   const onSubmit = async (data: LoginRequest) => {
     try {
       setServerError(null);
       await dispatch(loginUser(data)).unwrap()
-       navigate(from, { replace: true });
-      
+      navigate(from, { replace: true });
+
     } catch (error: unknown) {
-      
+
       if (typeof error === "string") {
         setServerError(error);
       } else if (error instanceof Error) {
@@ -72,8 +73,8 @@ const LoginForm = () => {
       />
       <p className="text-red-500 text-sm h-7 flex items-center transition-all duration-200 mb-2">
         {touchedFields.password && errors.password
-    ? errors.password.message
-    : serverError || " "}
+          ? errors.password.message
+          : serverError || " "}
       </p>
       <button
         type="submit"
@@ -90,6 +91,14 @@ const LoginForm = () => {
           Register
         </Link>
       </p>
+
+      <button
+        type="button"
+        onClick={() => reset({ email: "user@example.com", password: "strongPassword123" })}
+        className="w-full bg-blue-100 text-blue-800 border border-blue-200 p-2 rounded mt-4 hover:bg-blue-200 transition-colors"
+      >
+        Fill Test Credentials (for testing)
+      </button>
     </form>
   );
 };
