@@ -17,9 +17,9 @@ async function bootstrap() {
   );
  
   const config = new DocumentBuilder()
-    .setTitle('API Example')       
+    .setTitle('Events project')       
     .setDescription('API description') 
-    .setVersion('0.1.0')
+    .setVersion('0.2.0')
     .addBearerAuth()        
     .build();
 
