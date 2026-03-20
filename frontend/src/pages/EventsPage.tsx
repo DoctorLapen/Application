@@ -10,6 +10,7 @@ import { availableTags } from "../features/events/constants";
 import type { Tag } from "../features/events/types";
 
 import TagMultiSelect from "../features/events/TagMultiSelect";
+import AIAssistant from "../features/ai-assistant/AiAssistant";
 
 
 export const EventsPage = () => {
@@ -19,6 +20,17 @@ export const EventsPage = () => {
 
   const [tempTags, setTempTags] = useState<Tag[]>([]);
 
+
+    const { answer } = useSelector((state: RootState) => state.aiAssistant);
+
+  
+
+  useEffect(() => {
+    if (answer ) {
+      
+      setTempTags([]);
+    }
+  }, [answer]);
 
   useEffect(() => {
     dispatch(getEvents());
@@ -38,6 +50,7 @@ export const EventsPage = () => {
        
         <h1 className="text-3xl font-bold mb-6">Public Events</h1>
 
+        <AIAssistant />
         
         <div className="max-w-3xl mb-6">
           <div className="flex flex-col sm:flex-row gap-2 sm:items-start">
@@ -69,6 +82,7 @@ export const EventsPage = () => {
             </div>
           </div>
         </div>
+        
 
        
         <div className="flex-1 flex flex-col">

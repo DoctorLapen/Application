@@ -154,7 +154,7 @@ const CreateEventForm = () => {
             <DatePicker
               selected={selectedDate}
               onChange={(date: Date | null) => setSelectedDate(date)}
-              placeholderText="dd/MM/yyyy"
+              placeholderText="dd/mm/yyyy"
               className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
               dateFormat="dd/MM/yyyy"
               minDate={tomorrow}
