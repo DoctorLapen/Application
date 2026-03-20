@@ -1,6 +1,7 @@
 import { UserResponseDto } from "src/auth/dto/user-response.dto";
 import { EventVisibility } from "../types/events.types";
 import { Type } from "class-transformer";
+import { TagDto } from "./tag.dto";
 
 export class EventResponseDto {
   id: number;
@@ -13,6 +14,9 @@ export class EventResponseDto {
 
   @Type(() => UserResponseDto)
   organizer: UserResponseDto;
+
+  @Type(() => TagDto)
+  tags: TagDto[];
 
   @Type(() => UserResponseDto)
   participants: UserResponseDto[];

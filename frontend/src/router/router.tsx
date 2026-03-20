@@ -18,12 +18,12 @@ export const router = createBrowserRouter([
       { index: true, element: <EventsPage/> },
       { path: 'login', element: <LoginPage /> },
       { path: 'register', element: <RegisterPage /> },
+      { path: 'events/:id', element: <EventDetailsPage /> },
        {
         loader: requireAuth,
         children: [
           { path: "events/create", element: <CreateEventPage /> },
           { path: "events/me", element: <MyEventsPage /> },
-          { path: 'events/:id', element: <EventDetailsPage /> },
           { path: "/events/edit/:id", element: <EditEventPage /> },
         ],
       },

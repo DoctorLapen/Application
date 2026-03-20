@@ -16,4 +16,13 @@ export const editEventValidator = (currentParticipantsCount: number) =>
         currentParticipantsCount,
         `Capacity cannot be less than current participants (${currentParticipantsCount})`
       ),
+      tags: yup
+          .array()
+          .of(
+            yup.object().shape({
+              id: yup.number().required(),
+              name: yup.string().required()
+            })
+          )
+          .max(5, 'Maximum 5 tags allowed'),
   });

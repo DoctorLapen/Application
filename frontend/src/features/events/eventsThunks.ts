@@ -6,7 +6,7 @@ import type { EditEventRequest, EventResponse } from "./types";
 
 export const createEvent = createAsyncThunk<
   EventResponse, 
-  { title: string; description?: string; location: string; capacity?: number | null; visibility: "public" | "private";  dateTime: Date },
+  { title: string; description?: string; location: string; capacity?: number | null; visibility: "public" | "private";  dateTime: Date ,tags?:number[]},
   { state: RootState }
 >(
   "events/createEvent",
@@ -37,13 +37,20 @@ export const createEvent = createAsyncThunk<
 
 export const getEvents = createAsyncThunk<
   EventResponse[],
-  void,
+ { tags?: number[] } | undefined ,
   { rejectValue: string }
 >(
   "events/getEvents",
-  async (_, thunkAPI) => {
+  async (params, thunkAPI) => {
     try {
-      const response = await api.get<EventResponse[]>("/events");
+       let url = "/events";
+
+      if (params?.tags?.length) {
+        const query = params.tags.map(id => `tags=${id}`).join("&");
+        url += `?${query}`;
+      }
+
+      const response = await api.get<EventResponse[]>(url);
       return response.data;
     } catch (err: unknown) {
       let message = "Failed to fetch events";

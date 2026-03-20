@@ -12,6 +12,7 @@ export const mapEventResponseToEvent = (ev: EventResponse): Event => ({
   visibility: ev.visibility,
   organizer: ev.organizer,       
   participants: ev.participants,
+  tags:ev.tags,
 });
 
 export const mapEventToEventData = (event: Event): EventData => ({
@@ -21,6 +22,7 @@ export const mapEventToEventData = (event: Event): EventData => ({
   capacity: event.capacity ?? null,
   visibility: event.visibility,
   dateTime: event.dateTime ? new Date(event.dateTime) : null,
+  tags:event.tags,
 });
 
 export const formatTimeForInput = (date: Date | null) => (date ? format(date, "HH:mm") : "");

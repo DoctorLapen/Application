@@ -1,6 +1,7 @@
 import { User } from "src/auth/entities/user.entity";
-import { Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { EventVisibility } from "../types/events.types";
+import { Tag } from "./tag.entity";
 
 
 
@@ -27,7 +28,9 @@ export class Event {
   @Column({ type: 'enum', enum: EventVisibility, default: EventVisibility.PUBLIC })
   visibility: EventVisibility;
 
- 
+  @ManyToMany(() => Tag, (tag) => tag.events, { eager: true })
+  @JoinTable()
+  tags: Tag[];
 
   @ManyToOne(() => User, user => user.organizedEvents)
   organizer: User;

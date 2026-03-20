@@ -6,6 +6,8 @@ import { AuthModule } from './auth/auth.module';
 import { EventsModule } from './events/events.module';
 import { User } from './auth/entities/user.entity';
 import { Event } from './events/entities/event.entity';
+import { Tag } from './events/entities/tag.entity';
+import { AiAssistantModule } from './ai-assistant/ai-assistant.module';
 @Module({
   imports: [ConfigModule.forRoot({
     isGlobal: true,
@@ -21,7 +23,7 @@ import { Event } from './events/entities/event.entity';
         ? { rejectUnauthorized: false }
         : false,
 
-      entities: [User,Event],
+      entities: [User,Event,Tag],
       synchronize: configService.get<string>('DB_SYNCHRONIZE') === 'true',
       logging: true, 
       
@@ -30,7 +32,9 @@ import { Event } from './events/entities/event.entity';
 
   AuthModule,
 
-  EventsModule],
+  EventsModule,
+
+  AiAssistantModule],
   
 })
 export class AppModule { }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router";
+import { useParams, useNavigate, useLocation } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 
 import type { AppDispatch, RootState } from "../store/store";
@@ -9,16 +9,19 @@ import { selectEventById } from "../features/events/eventSelector";
 import { ConfirmModal } from "../features/events/ConfirmModal";
 import { Calendar, MapPin, Users } from "lucide-react";
 import { format } from "date-fns";
+import { tagColors } from "../features/events/constants";
+import Spinner from "../components/Spinner";
 
 
 export const EventDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+  const location = useLocation();
 
   const [confirmDelete, setConfirmDelete] = useState(false);
   const event = useSelector(selectEventById(id!));
-  const currentUser = useSelector((state: RootState) => state.auth.user);
+  const { user, isAuth } = useSelector((state: RootState) => state.auth);
   const loading = useSelector((state: RootState) => state.events.loading);
 
   useEffect(() => {
@@ -35,18 +38,22 @@ export const EventDetailsPage = () => {
 
 
 
-  if (loading || !event) return <div>Loading...</div>;
+  if (loading || !event) return (
+    <div className="flex-1 flex items-center justify-center text-center w-full">
+      <Spinner />
+    </div>
+  )
   const participants = event.participants ?? [];
-  
+
   const visibleParticipants = showAllParticipants
-  ? participants
-  : participants.slice(0, 5);
+    ? participants
+    : participants.slice(0, 5);
 
   const isParticipant = participants.some(
-    (p) => p.id === currentUser?.id
+    (p) => p.id === user?.id
   );
 
-  const isOrganizer = event?.organizer.id === currentUser?.id;
+  const isOrganizer = event?.organizer.id === user?.id;
 
   const isFull =
     event.capacity !== null &&
@@ -55,13 +62,23 @@ export const EventDetailsPage = () => {
 
   const handleJoin = () => {
     if (id) {
-      dispatch(joinEvent(Number(id)));
+
+      if (isAuth) {
+        dispatch(joinEvent(Number(id)));
+      } else {
+        navigate(`/login?from=${encodeURIComponent(location.pathname)}`);
+      }
     }
   };
 
   const handleLeave = () => {
     if (id) {
-      dispatch(leaveEvent(Number(id)));
+
+      if (isAuth) {
+        dispatch(leaveEvent(Number(id)));
+      } else {
+        navigate(`/login?from=${encodeURIComponent(location.pathname)}`);
+      }
     }
   };
 
@@ -127,6 +144,20 @@ export const EventDetailsPage = () => {
             </div>
           )}
 
+          {event.tags?.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-4">
+              {event.tags.map(tag => (
+                <span
+                  key={tag.id}
+                  className="px-3 py-1 text-sm rounded text-white font-medium hover:opacity-90 transition"
+                  style={{ backgroundColor: tagColors[tag.id] || "#9ca3af" }}
+                >
+                  {tag.name}
+                </span>
+              ))}
+            </div>
+          )}
+
           {/* Join / Leave Buttons */}
           <div className="mt-4 flex gap-3">
             {isParticipant ? (
@@ -141,8 +172,8 @@ export const EventDetailsPage = () => {
                 onClick={handleJoin}
                 disabled={isFull}
                 className={`px-4 py-2 rounded ${isFull
-                    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                    : "bg-blue-500 text-white hover:bg-blue-600"
+                  ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                  : "bg-blue-500 text-white hover:bg-blue-600"
                   } transition`}
               >
                 Join

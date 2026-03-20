@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional, IsNumber, IsEnum, IsISO8601, Min } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsNumber, IsEnum, IsISO8601, Min, IsInt, IsArray, ArrayMaxSize } from 'class-validator';
 import { EventVisibility } from '../types/events.types';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
@@ -49,6 +49,19 @@ export class CreateEventDto {
   @IsNumber({}, { message: 'Capacity must be a number' })
   @Min(1, { message: 'Capacity must be at least 1 participant' })
   capacity?: number;
+
+  @ApiPropertyOptional({
+    description: 'List of tag IDs assigned to the event',
+    example: [1, 2, 3],
+    type: Number,
+    isArray: true,
+  })
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(5, { message: 'Maximum 5 tags allowed per event' })
+  @IsInt({ each: true, message: 'Each tag ID must be a number' })
+  tags?: number[];
+
 
   @ApiProperty({
     description: 'Visibility level of the event',

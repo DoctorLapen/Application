@@ -20,7 +20,11 @@ const initialState: EventsState = {
 const eventsSlice = createSlice({
   name: "events",
   initialState,
-  reducers: {clearEvents:()=> initialState,},
+  reducers: {clearEvents:()=> initialState,
+    setEventsFromServer(state, action: PayloadAction<EventResponse[]>) {
+      state.events = action.payload.map(mapEventResponseToEvent);
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createEvent.pending, (state) => {
@@ -173,6 +177,6 @@ const eventsSlice = createSlice({
 
   },
 });
-export const { clearEvents} = eventsSlice.actions;
+export const { clearEvents,setEventsFromServer} = eventsSlice.actions;
 
 export default eventsSlice.reducer;

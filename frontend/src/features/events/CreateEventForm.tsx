@@ -9,10 +9,14 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import { createEvent } from "./eventsThunks";
 import { createEventValidator } from "../../validation/createEventValidator";
-import type { EventData } from "./types";
+import type { EventData,  } from "./types";
 
 
 import { formatTimeForInput, parseTimeFromInput } from "./utils";
+import TagMultiSelect from "./TagMultiSelect";
+import { availableTags } from "./constants";
+
+
 
 
 
@@ -42,6 +46,8 @@ const CreateEventForm = () => {
       capacity: null,
       visibility: "public",
       dateTime: null,
+      tags: [], 
+      
     },
   });
 
@@ -74,6 +80,8 @@ const CreateEventForm = () => {
 
         dateTime: data.dateTime,
         capacity: data.capacity || null,
+        tags:data.tags.map(tag => tag.id),
+
       };
 
       const result = await dispatch(createEvent(eventData)).unwrap();
@@ -146,7 +154,7 @@ const CreateEventForm = () => {
             <DatePicker
               selected={selectedDate}
               onChange={(date: Date | null) => setSelectedDate(date)}
-              placeholderText="dd/MM/yyyy"
+              placeholderText="dd/mm/yyyy"
               className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
               dateFormat="dd/MM/yyyy"
               minDate={tomorrow}
@@ -212,6 +220,29 @@ const CreateEventForm = () => {
       </p>
     </div>
 
+    <div>
+    <label className="block text-sm font-medium mb-1">
+        Tags
+      </label>
+    <Controller
+        name="tags"
+        control={control}
+        render={({ field: { value, onChange },fieldState }) => (
+          <>
+          <TagMultiSelect
+            availableTags={availableTags}
+            selectedTags={value}
+            onChange={onChange}
+            placeholder="Select tags (up to 5)"
+          />
+           <p className="text-red-500 text-sm h-5 flex items-center">
+          {fieldState.error?.message || " "}
+        </p>
+        </>
+        )}
+      />
+      </div>
+
     {/* VISIBILITY */}
     <div>
       <label className="block text-sm font-medium mb-2">
@@ -239,6 +270,7 @@ const CreateEventForm = () => {
         </label>
       </div>
     </div>
+    
 
     {/* SERVER ERROR */}
     <p className="text-red-500 text-sm h-6 flex items-center">

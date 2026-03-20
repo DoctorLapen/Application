@@ -30,4 +30,13 @@ export const createEventValidator = yup.object({
       "Event must start no earlier than the next day",
       validateEventDate
     ),
+  tags: yup
+    .array()
+    .of(
+      yup.object().shape({
+        id: yup.number().required(),
+        name: yup.string().required()
+      })
+    )
+    .max(5, 'Maximum 5 tags allowed'),
 });
