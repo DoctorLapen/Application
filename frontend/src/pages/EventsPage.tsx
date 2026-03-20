@@ -11,6 +11,7 @@ import type { Tag } from "../features/events/types";
 
 import TagMultiSelect from "../features/events/TagMultiSelect";
 import AIAssistant from "../features/ai-assistant/AiAssistant";
+import Spinner from "../components/Spinner";
 
 
 export const EventsPage = () => {
@@ -88,7 +89,7 @@ export const EventsPage = () => {
         <div className="flex-1 flex flex-col">
           {loading ? (
             <div className="flex-1 flex items-center justify-center text-center w-full">
-              Loading events...
+              <Spinner/>
             </div>
           ) : events.length === 0 ? (
             <div className="flex-1 flex items-center justify-center text-center w-full text-gray-500">

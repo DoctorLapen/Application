@@ -10,6 +10,7 @@ import { ConfirmModal } from "../features/events/ConfirmModal";
 import { Calendar, MapPin, Users } from "lucide-react";
 import { format } from "date-fns";
 import { tagColors } from "../features/events/constants";
+import Spinner from "../components/Spinner";
 
 
 export const EventDetailsPage = () => {
@@ -37,7 +38,11 @@ export const EventDetailsPage = () => {
 
 
 
-  if (loading || !event) return <div>Loading...</div>;
+  if (loading || !event) return (
+    <div className="flex-1 flex items-center justify-center text-center w-full">
+      <Spinner />
+    </div>
+  )
   const participants = event.participants ?? [];
 
   const visibleParticipants = showAllParticipants

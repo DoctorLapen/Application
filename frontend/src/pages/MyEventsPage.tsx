@@ -9,6 +9,7 @@ import { useNavigate } from "react-router";
 import EventItem from "../features/events/calendar/EventItem";
 import CustomToolbar from "../features/events/calendar/CustomToolBar";
 import { tagColors } from "../features/events/constants";
+import Spinner from "../components/Spinner";
 
 
 const locales = { "en-US": enUS };
@@ -53,7 +54,11 @@ const MyEventsPage = () => {
   
   const [currentDate, setCurrentDate] = useState(new Date());
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return (
+    <div className="flex-1 flex items-center justify-center text-center w-full">
+      <Spinner />
+    </div>
+  )
 
   if (!userEvents || userEvents.length === 0) {
     return (
