@@ -29,4 +29,5 @@ env.d.ts
 *.sw?
 
 *.tsbuildinfo
+.env
 
