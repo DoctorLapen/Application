@@ -20,7 +20,13 @@ const Header = () => {
     }
     return (
         <header className="w-full bg-white border-b-2 border-gray-200">
-            <div className="w-full px-4 py-3 flex justify-end">
+            <div className="w-full px-4 py-3 flex justify-between">
+
+                <div className="flex items-center px-2 py-2">
+                    <span className="text-lg sm:text-xl font-semibold text-gray-800">
+                        Events
+                    </span>
+                </div>
                 <nav className="flex items-center gap-4">
 
                     <NavLink to="/" className={linkStyle} title="Events">
@@ -38,10 +44,10 @@ const Header = () => {
                         className="flex items-center sm:px-4 sm:py-2 rounded-lg sm:bg-blue-600 sm:hover:bg-blue-700 transition"
                         title="Create Event"
                     >
-                        
+
                         <PlusCircle size={18} className="text-blue-600 sm:hidden" />
 
-                        
+
                         <span className="hidden sm:flex items-center gap-2 text-white">
                             <PlusCircle size={18} />
                             Create Event
