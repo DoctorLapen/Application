@@ -68,9 +68,9 @@ const EditEventForm = ({ eventId, initialData, currentParticipantsCount }: EditE
     if (selectedDate && selectedTime) {
       const combined = new Date(selectedDate);
       combined.setHours(selectedTime.getHours(), selectedTime.getMinutes(), 0, 0);
-      setValue("dateTime", combined, { shouldValidate: true });
+      setValue("dateTime", combined, { shouldValidate: true,shouldDirty: true });
     } else {
-      setValue("dateTime", null, { shouldValidate: true });
+      setValue("dateTime", null, { shouldValidate: true,shouldDirty: true });
     }
   }, [selectedDate, selectedTime, setValue]);
 
